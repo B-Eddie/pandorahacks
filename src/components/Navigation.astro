@@ -1,28 +1,27 @@
 <!-- Navigation -->
-<nav
-  id="navbar"
-  class="fixed top-0 w-full z-50 transition-all duration-500 ease-out"
->
-  <div class="w-full">
+<nav id="navbar" class="fixed top-0 w-full z-50">
+  <div class="w-full" id="nav-container">
     <div
       id="nav-content"
-      class="flex justify-between items-center transition-all duration-500 ease-out transform"
+      class="flex justify-between items-center"
       style="padding-left: min(163px, 8.5vw); padding-top: min(56px, 2.9vw); padding-bottom: min(56px, 2.9vw); padding-right: min(163px, 8.5vw);"
     >
-      <div
-        class="flex items-center space-x-8 transition-transform duration-500 ease-out"
-        id="nav-left"
-      >
-        <h1
-          class="text-2xl font-bold text-purple-400 transition-transform duration-500 ease-out"
-          id="logo"
-        >
+      <!-- Left section: Logo -->
+      <div class="flex items-center" id="nav-left">
+        <h1 class="text-2xl font-bold text-purple-400" id="logo-text">
           PandoraHacks
         </h1>
-        <div
-          id="nav-links"
-          class="hidden md:flex space-x-8 transition-all duration-500 ease-out"
-        >
+        <img
+          src="/logo.png"
+          alt="PandoraHacks Logo"
+          class="h-8 w-auto opacity-0"
+          id="logo-image"
+        />
+      </div>
+
+      <!-- Right section: Navigation Links -->
+      <div class="flex items-center" id="nav-right">
+        <div id="nav-links" class="flex space-x-8">
           <a
             href="#hero"
             class="text-gray-300 hover:text-purple-400 transition duration-300"
@@ -49,114 +48,250 @@
             >Team</a
           >
         </div>
+
+        <button
+          id="register-btn"
+          class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg ml-8"
+        >
+          Register Now
+        </button>
       </div>
-      <button
-        id="register-btn"
-        class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-500 ease-out opacity-0 transform translate-x-8 scale-95 pointer-events-none"
-      >
-        Register Now
-      </button>
     </div>
   </div>
 </nav>
 
+<style>
+  /* Simplified CSS - GSAP will handle animations */
+  #nav-container {
+    width: 100%;
+    will-change: transform, background, border-radius;
+    transform-origin: center center;
+    position: relative;
+    left: 50%;
+  }
+
+  #nav-content {
+    will-change: padding;
+  }
+
+  #logo-text,
+  #logo-image {
+    will-change: transform, text-shadow, opacity;
+    transform-origin: center center;
+    position: absolute;
+  }
+
+  #nav-links {
+    will-change: transform;
+    transform-origin: center center;
+  }
+
+  #register-btn {
+    will-change: opacity, transform;
+    transform-origin: center center;
+  }
+
+  /* Ensure smooth transforms and prevent white flashes */
+  #nav-container,
+  #logo-text,
+  #logo-image,
+  #nav-links,
+  #register-btn {
+    backface-visibility: hidden;
+    perspective: 1000px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Prevent backdrop-filter white flash */
+  #nav-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+    pointer-events: none;
+    z-index: -1;
+  }
+</style>
+
 <script>
-  window.addEventListener("scroll", () => {
-    const navbar = document.getElementById("navbar");
-    const navContent = document.getElementById("nav-content");
-    const navLeft = document.getElementById("nav-left");
-    const logo = document.getElementById("logo");
-    const navLinks = document.getElementById("nav-links");
-    const registerBtn = document.getElementById("register-btn");
+  // Wait for DOM to be ready first
+  document.addEventListener("DOMContentLoaded", () => {
+    // Load GSAP from CDN
+    const script1 = document.createElement("script");
+    script1.src =
+      "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js";
+    document.head.appendChild(script1);
 
-    if (window.scrollY > 100) {
-      // Scrolled state: reorganize layout with closer spacing
-      navbar?.classList.add("bg-gray-900/90", "backdrop-blur-sm");
+    script1.onload = () => {
+      const script2 = document.createElement("script");
+      script2.src =
+        "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js";
+      document.head.appendChild(script2);
 
-      // Adjust container padding smoothly
-      if (navContent) {
-        navContent.style.paddingLeft = "min(80px, 4.2vw)";
-        navContent.style.paddingRight = "min(80px, 4.2vw)";
-        navContent.style.paddingTop = "min(16px, 0.8vw)";
-        navContent.style.paddingBottom = "min(16px, 0.8vw)";
-      }
+      script2.onload = () => {
+        // Access GSAP from window object
+        const gsap = (window as any).gsap;
+        const ScrollTrigger = (window as any).ScrollTrigger;
 
-      // Slide logo slightly to the left (subtle movement)
-      if (logo) {
-        logo.style.transform = "translateX(-60px)";
-      }
+        if (!gsap || !ScrollTrigger) {
+          return;
+        }
 
-      // Keep navigation links centered with subtle shift
-      if (navLinks) {
-        navLinks.style.transform = "translateX(-20px)";
-      }
+        gsap.registerPlugin(ScrollTrigger);
 
-      // Slide register button in from hidden state
-      if (registerBtn) {
-        registerBtn.style.transform = "translateX(-60px)";
-        registerBtn.classList.remove(
-          "opacity-0",
-          "translate-x-8",
-          "scale-95",
-          "pointer-events-none"
-        );
-        registerBtn.classList.add(
-          "opacity-100",
-          "translate-x-0",
-          "scale-100",
-          "pointer-events-auto"
-        );
-      }
+        const navContainer = document.getElementById("nav-container");
+        const navContent = document.getElementById("nav-content");
+        const logoText = document.getElementById("logo-text");
+        const logoImage = document.getElementById("logo-image");
+        const navLinks = document.getElementById("nav-links");
+        const registerBtn = document.getElementById("register-btn");
+        const navLinksA = document.querySelectorAll("#nav-links a");
 
-      // Remove spacing between logo and links
-      if (navLeft) {
-        navLeft.classList.remove("space-x-8");
-        navLeft.classList.add("space-x-0");
-      }
-    } else {
-      // Top state: back to original layout
-      navbar?.classList.remove("bg-gray-900/90", "backdrop-blur-sm");
+        // Ensure all elements exist
+        if (
+          !navContainer ||
+          !navContent ||
+          !logoText ||
+          !logoImage ||
+          !navLinks ||
+          !registerBtn
+        ) {
+          return;
+        }
 
-      // Reset container padding smoothly
-      if (navContent) {
-        navContent.style.paddingLeft = "min(163px, 8.5vw)";
-        navContent.style.paddingRight = "min(163px, 8.5vw)";
-        navContent.style.paddingTop = "min(56px, 2.9vw)";
-        navContent.style.paddingBottom = "min(56px, 2.9vw)";
-      }
+        // Set initial transform-origin for centered scaling
+        gsap.set(navContainer, {
+          transformOrigin: "center center",
+          left: "50%",
+          x: "-50%",
+        });
+        gsap.set(logoText, { transformOrigin: "center center" });
+        gsap.set(logoImage, { transformOrigin: "center center" });
+        gsap.set(navLinks, { transformOrigin: "center center" });
+        gsap.set(registerBtn, { transformOrigin: "center center" });
 
-      // Reset logo position smoothly
-      if (logo) {
-        logo.style.transform = "translateX(0)";
-      }
+        // Use ScrollTrigger for smooth element movement toward center
+        ScrollTrigger.create({
+          trigger: "body",
+          start: "top top",
+          end: "100px top",
+          scrub: 1,
+          onUpdate: (self: any) => {
+            const progress = self.progress;
+            const viewportWidth = window.innerWidth;
 
-      // Reset navigation links smoothly
-      if (navLinks) {
-        navLinks.style.transform = "translateX(0)";
-      }
+            // Responsive movement values based on screen size
+            let logoMove, linksMove, buttonMove, widthReduction;
 
-      // Slide register button back out
-      if (registerBtn) {
-        registerBtn.style.transform = "translateX(0)";
-        registerBtn.classList.remove(
-          "opacity-100",
-          "translate-x-0",
-          "scale-100",
-          "pointer-events-auto"
-        );
-        registerBtn.classList.add(
-          "opacity-0",
-          "translate-x-8",
-          "scale-95",
-          "pointer-events-none"
-        );
-      }
+            if (viewportWidth >= 1600) {
+              // Very large screens
+              logoMove = 80;
+              linksMove = -140;
+              buttonMove = -50;
+              widthReduction = 60;
+            } else if (viewportWidth >= 1200) {
+              // Desktop large (including 1440px)
+              logoMove = 60;
+              linksMove = -80;
+              buttonMove = -30;
+              widthReduction = 40;
+            } else if (viewportWidth >= 768) {
+              // Desktop/tablet (iPad)
+              logoMove = 20;
+              linksMove = -40;
+              buttonMove = -10;
+              widthReduction = 20;
+            } else {
+              // Mobile
+              logoMove = 20;
+              linksMove = -60;
+              buttonMove = -20;
+              widthReduction = 30;
+            }
 
-      // Reset spacing between logo and links
-      if (navLeft) {
-        navLeft.classList.remove("space-x-0");
-        navLeft.classList.add("space-x-8");
-      }
-    }
+            // Move elements toward center based on scroll progress
+            const isMobile = viewportWidth < 768;
+            const isTablet = viewportWidth >= 768 && viewportWidth < 1200;
+            const shouldShowImage = progress > 0.1 || isMobile || isTablet;
+
+            // Handle logo switching
+            gsap.to(logoText, {
+              opacity: shouldShowImage ? 0 : 1,
+              x: progress * logoMove,
+              duration: 0.1,
+              ease: "none",
+            });
+
+            gsap.to(logoImage, {
+              opacity: shouldShowImage ? 1 : 0,
+              x: progress * logoMove,
+              duration: 0.1,
+              ease: "none",
+            });
+
+            gsap.to(navLinks, {
+              x: progress * linksMove,
+              duration: 0.1,
+              ease: "none",
+            });
+
+            gsap.to(registerBtn, {
+              x: progress * buttonMove,
+              duration: 0.1,
+              ease: "none",
+            });
+
+            // Add background and styling based on progress
+            gsap.to(navContainer, {
+              y: progress * 50,
+              width: `${100 - progress * widthReduction}%`,
+              background: `rgba(255, 255, 255, ${progress * 0.1})`,
+              backdropFilter: `blur(${progress * 12}px)`,
+              borderRadius: `${progress * 16}px`,
+              boxShadow: `0 ${progress * 8}px ${progress * 32}px rgba(0, 0, 0, ${progress * 0.15}), 
+                         inset 0 1px 0 rgba(255, 255, 255, ${progress * 0.2})`,
+              border: `1px solid rgba(255, 255, 255, ${progress * 0.18})`,
+              duration: 0.1,
+              ease: "none",
+            });
+
+            // Responsive padding based on screen size
+            const basePaddingY = viewportWidth >= 768 ? 56 : 40;
+            const basePaddingX = viewportWidth >= 768 ? 163 : 80;
+            const paddingReductionY = viewportWidth >= 768 ? 36 : 25;
+            const paddingReductionX = viewportWidth >= 768 ? 123 : 60;
+
+            gsap.to(navContent, {
+              padding: `${basePaddingY - progress * paddingReductionY}px ${basePaddingX - progress * paddingReductionX}px`,
+              duration: 0.1,
+              ease: "none",
+            });
+
+            gsap.to(logoText, {
+              textShadow: `0 0 ${progress * 12}px rgba(147, 51, 234, ${progress * 0.6})`,
+              duration: 0.1,
+              ease: "none",
+            });
+
+            gsap.to(navLinksA, {
+              textShadow: `0 0 ${progress * 8}px rgba(255, 255, 255, ${progress * 0.1})`,
+              duration: 0.1,
+              ease: "none",
+            });
+          },
+        });
+
+        // Add resize listener for responsive updates
+        const handleResize = () => {
+          ScrollTrigger.refresh();
+        };
+
+        window.addEventListener("resize", handleResize);
+      };
+    };
   });
 </script>
